@@ -128,8 +128,28 @@ export function initializePortfolioGallery() {
 
     const image = currentCollection.images[currentIndex];
 
+    const updateImageLayout = () => {
+      if (mainImage.naturalWidth <= 0 || mainImage.naturalHeight <= 0) {
+        return;
+      }
+
+      const isPortrait = mainImage.naturalHeight > mainImage.naturalWidth;
+
+      stage.style.aspectRatio = `${mainImage.naturalWidth} / ${mainImage.naturalHeight}`;
+
+      stage.classList.toggle("is-portrait", isPortrait);
+    };
+
+    mainImage.onload = updateImageLayout;
+
     mainImage.src = image.src;
     mainImage.alt = image.alt;
+
+    // Jika gambar sudah tersimpan di browser cache,
+    // event load bisa saja sudah selesai sebelum listener dipasang.
+    if (mainImage.complete && mainImage.naturalWidth > 0) {
+      updateImageLayout();
+    }
 
     updateActiveThumbnail(options);
   }
